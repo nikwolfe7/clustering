@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import mlsp.cs.cmu.edu.dnn.training.DataInstance;
-
 public class ClusterDataset {
 	
 	private List<DataInstance> data;
