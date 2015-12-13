@@ -98,7 +98,8 @@ public class Cluster {
 	}
 
 	public boolean removeDataInstance(DataInstance instance) {
-		return clusterData.remove(instance);
+		boolean returned = clusterData.remove(instance); 
+	  return returned;
 	}
 
 	public Iterator<DataInstance> getDataInstances() {

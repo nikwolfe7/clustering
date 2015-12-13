@@ -43,7 +43,6 @@ public class KMeansClustering {
 		double prevDiff = Double.POSITIVE_INFINITY;
 		/* START */
 		while (true) {
-			/* Keep track of most isolated*/
 			/* Reassign Clusters */
 			for (int i = 0; i < getKClusters().size(); i++) {
 				/* For each cluster... */
@@ -102,12 +101,38 @@ public class KMeansClustering {
 		calculateAccuracy();
 	}
 	
+	/*
+	 * Returns the data point with the largest
+	 * minimum distance from any centroid, i.e.
+	 * the most "distant" datapoint
+	 * 
+	 * */
 	private DataInstance getFarthestDataPoint() {
-		Cluster farCluster;
-		DataInstance farInstance;
-		double farDist;
-		for
-		
+		Cluster farCluster = null;
+		DataInstance farInstance = null;
+		double farDist = 0;
+		for(Cluster cluster : getKClusters()) {
+		  Iterator<DataInstance> iter = cluster.getDataInstances();
+		  while(iter.hasNext()) {
+		    DataInstance inst = iter.next();
+		    Cluster minDistCluster = cluster;
+		    double minDist = Double.POSITIVE_INFINITY;
+		    for(Cluster kCluster : getKClusters()) {
+		      double dist = kCluster.getCentroidDistance(inst);
+		      if(dist < minDist) {
+		        minDist = dist;
+		        minDistCluster = cluster;
+		      }
+		    }
+		    if(minDist > farDist) {
+		      farDist = minDist;
+		      farInstance = inst;
+		      farCluster = minDistCluster;
+		    }
+		  }
+		}
+		farCluster.removeDataInstance(farInstance);
+		return farInstance;
 	}
 
 	private void calculateAccuracy() {
@@ -133,7 +158,7 @@ public class KMeansClustering {
 	}
 	
 	private void spreadData(List<DataInstance> data) {
-		Collections.shuffle(data);
+		//Collections.shuffle(data);
 		int i = 0;
 		for (DataInstance instance : data) {
 			Cluster cluster = getKClusters().get(i);
