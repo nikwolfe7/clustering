@@ -2,45 +2,45 @@ package clustering;
 
 public class DataInstance {
 
-	private double[] input;
-	private double[] output;
+	private double[] data;
+	private double[] label;
 
 	/**
 	 * Assumes we have truth values first from left to right, then input value
 	 * 
-	 * @param inputDimension
-	 * @param outputDimension
+	 * @param dataDimension
+	 * @param labelDimension
 	 * @param vector
 	 */
-	public DataInstance(int inputDimension, int outputDimension, double[] vector) {
-		this.input = new double[inputDimension];
-		this.output = new double[outputDimension];
-		System.arraycopy(vector, outputDimension, input, 0, inputDimension);
-		System.arraycopy(vector, 0, output, 0, outputDimension);
+	public DataInstance(int dataDimension, int labelDimension, double[] vector) {
+		this.data = new double[dataDimension];
+		this.label = new double[labelDimension];
+		System.arraycopy(vector, labelDimension, data, 0, dataDimension);
+		System.arraycopy(vector, 0, label, 0, labelDimension);
 	}
 	
-	public void replaceInputVector(double[] vector) {
-		input = vector;
+	public void replaceDataVector(double[] vector) {
+		data = vector;
 	}
 
-	public double[] getInputVector() {
-		return input;
+	public double[] getDataVector() {
+		return data;
 	}
 	
-	public int getInputDimension() {
-		return input.length;
+	public int getDataDimension() {
+		return data.length;
 	}
 	
-	public void replaceOutputTruthValue(double[] vector) {
-		output = vector;
+	public void replaceLabelValue(double[] vector) {
+		label = vector;
 	}
 
-	public double[] getOutputTruthValue() {
-		return output;
+	public double[] getLabelValue() {
+		return label;
 	}
 	
-	public int getOutputDimension() {
-		return output.length;
+	public int getLabelValueDimension() {
+		return label.length;
 	}
 
 }
