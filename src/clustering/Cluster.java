@@ -78,6 +78,7 @@ public class Cluster {
 
 	public void initializeCentroid(DataInstance seed) {
 		setCentroid(seed.getDataVector());
+		addDataInstance(seed);
 	}
 
 	public void addToClusterUpdate(DataInstance instance) {

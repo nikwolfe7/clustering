@@ -23,7 +23,7 @@ public class ClusterDriver {
 	
 	private static void doClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
-		KMeansClustering kMeansClusterer = new KMeansClustering(K*3, metric);
+		KMeansClustering kMeansClusterer = new KMeansClustering(K, metric);
 		kMeansClusterer.setConvergenceCriteria(1.0e-10, 10);
 		kMeansClusterer.doKMeansClustering(dataSet);
 	}

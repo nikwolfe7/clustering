@@ -43,6 +43,7 @@ public class KMeansClustering {
 		double prevDiff = Double.POSITIVE_INFINITY;
 		/* START */
 		while (true) {
+			/* Keep track of most isolated*/
 			/* Reassign Clusters */
 			for (int i = 0; i < getKClusters().size(); i++) {
 				/* For each cluster... */
@@ -78,19 +79,12 @@ public class KMeansClustering {
 			/* Recalculate Centroids */
 			double centroidChange = calcCentroids();
 			/* Fix dead clusters... */
-			for(Cluster cluster : getKClusters()) {
+			for(int i = 0; i < getKClusters().size(); i++) {
+				Cluster cluster = getKClusters().get(i);
 				if(cluster.getClusterSize() == 0) {
-					/* Find point that is maximally distant from centroid */
-					double maxDist = Double.NEGATIVE_INFINITY;
-					DataInstance farPoint = null;
-					for(DataInstance instance : data) {
-						double dist = cluster.getCentroidDistance(instance);
-						if(dist > maxDist) {
-							maxDist = dist;
-							farPoint = instance;
-						}
-					}
-					cluster.initializeCentroid(farPoint);
+					DataInstance newCentroid;
+					newCentroid = getFarthestDataPoint();
+					cluster.initializeCentroid(newCentroid);
 				}
 			}
 			/* Update the world... */
@@ -106,6 +100,14 @@ public class KMeansClustering {
 		}
 		System.out.println("K-Means Clustering Complete! ");
 		calculateAccuracy();
+	}
+	
+	private DataInstance getFarthestDataPoint() {
+		Cluster farCluster;
+		DataInstance farInstance;
+		double farDist;
+		for
+		
 	}
 
 	private void calculateAccuracy() {
