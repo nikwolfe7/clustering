@@ -2,17 +2,20 @@ package clustering;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class ClusterDataset {
+public class ClusterDataSet {
 
 	private List<DataInstance> data;
+	private HashSet<Integer> labels;
 
-	public ClusterDataset(String fileName) {
+	public ClusterDataSet(String fileName) {
 		this.data = new LinkedList<>();
+		this.labels = new HashSet<Integer>();
 		try {
 			System.out.println("Reading data values in " + fileName + "...");
 			Scanner scn = new Scanner(new File(fileName));
@@ -23,12 +26,21 @@ public class ClusterDataset {
 					vals[i] = Double.parseDouble(arr[i]);
 				}
 				DataInstance instance = new DataInstance(2, 1, vals);
+				labels.add((int) instance.getLabelValue()[0]);
 				data.add(instance);
 			}
 			scn.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public int getIdealNumClusters() {
+		return labels.size();
+	}
+	
+	public HashSet<Integer> getLabels() {
+		return labels;
 	}
 
 	public List<DataInstance> getClusteringData() {

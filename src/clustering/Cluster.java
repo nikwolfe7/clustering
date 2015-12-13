@@ -1,8 +1,10 @@
 package clustering;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Cluster {
 
@@ -15,14 +17,15 @@ public class Cluster {
 	private double splitDeviation = 0.025;
 
 	public Cluster(DistanceMetric distanceMetric) {
-		this.clusterId = clusterIdGen++;
+		this.clusterId = clusterIdGen++; /*default*/
 		this.distanceMetric = distanceMetric;
 		this.clusterData = new LinkedList<>();
+		this.updateList = new LinkedList<>();
 		setCentroid(null);
 	}
 
 	public Cluster(double[] centroid, DistanceMetric distanceMetric) {
-		this.clusterId = clusterIdGen++;
+		this.clusterId = clusterIdGen++; /*default*/
 		this.distanceMetric = distanceMetric;
 		this.clusterData = new LinkedList<>();
 		this.updateList = new LinkedList<>();
@@ -32,7 +35,7 @@ public class Cluster {
 	public int getClusterId() {
 		return clusterId;
 	}
-
+	
 	public double[] getCentroid() {
 		return centroid;
 	}
@@ -40,8 +43,36 @@ public class Cluster {
 	public DistanceMetric getDistanceMetric() {
 		return distanceMetric;
 	}
+	
+	public void setClusterId(int id) {
+		clusterId = id;
+	}
+	
+	public int pickClusterLabelFromData() {
+		Iterator<DataInstance> iter = getDataInstances();
+		Map<Double, Integer> counter = new HashMap<Double, Integer>();
+		double maxLabel = 0;
+		int maxCount = 0;
+		while (iter.hasNext()) {
+			DataInstance inst = iter.next();
+			double label = inst.getLabelValue()[0];
+			int count;
+			if (counter.containsKey(label)) {
+				count = counter.get(label) + 1;
+				counter.put(label, count);
+			} else {
+				count = 1;
+				counter.put(label, count);
+			}
+			if(count > maxCount) {
+				maxCount = count;
+				maxLabel = label;
+			}
+		}
+		return (int) maxLabel;
+	}
 
-	public void setCentroid(double[] centroid) {
+	private void setCentroid(double[] centroid) {
 		this.centroid = centroid;
 	}
 
@@ -124,7 +155,8 @@ public class Cluster {
 				newCentroid[i] += instance.getDataVector()[i];
 			}
 		}
-		double divisor = 1 / getClusterSize();
+		int size = getClusterSize();
+		double divisor = (size > 0) ? 1.0 / size : size;
 		for (int i = 0; i < newCentroid.length; i++) {
 			newCentroid[i] *= divisor;
 		}
