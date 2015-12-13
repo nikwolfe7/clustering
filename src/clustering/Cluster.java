@@ -1,12 +1,14 @@
 package clustering;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Cluster {
 
 	private static int clusterIdGen = 1;
-	private List<DataInstance> clusterDatapoints;
+	private List<DataInstance> clusterData;
+	private List<DataInstance> updateList;
 	private DistanceMetric distanceMetric;
 	private double[] centroid;
 	private int clusterId;
@@ -15,14 +17,15 @@ public class Cluster {
 	public Cluster(DistanceMetric distanceMetric) {
 		this.clusterId = clusterIdGen++;
 		this.distanceMetric = distanceMetric;
-		this.clusterDatapoints = new LinkedList<>();
-		setCentroid(new double[] { 0 });
+		this.clusterData = new LinkedList<>();
+		setCentroid(null);
 	}
 
 	public Cluster(double[] centroid, DistanceMetric distanceMetric) {
 		this.clusterId = clusterIdGen++;
 		this.distanceMetric = distanceMetric;
-		this.clusterDatapoints = new LinkedList<>();
+		this.clusterData = new LinkedList<>();
+		this.updateList = new LinkedList<>();
 		setCentroid(centroid);
 	}
 
@@ -33,7 +36,7 @@ public class Cluster {
 	public double[] getCentroid() {
 		return centroid;
 	}
-	
+
 	public DistanceMetric getDistanceMetric() {
 		return distanceMetric;
 	}
@@ -42,21 +45,41 @@ public class Cluster {
 		this.centroid = centroid;
 	}
 
+	public void initializeCentroid(DataInstance seed) {
+		setCentroid(seed.getDataVector());
+	}
+
+	public void addToClusterUpdate(DataInstance instance) {
+		updateList.add(instance);
+	}
+
+	public void update() {
+		Iterator<DataInstance> iter = updateList.iterator();
+		while (iter.hasNext()) {
+			addDataInstance(iter.next());
+			iter.remove();
+		}
+	}
+
 	public void addDataInstance(DataInstance instance) {
-		clusterDatapoints.add(instance);
+		clusterData.add(instance);
 	}
 
 	public boolean removeDataInstance(DataInstance instance) {
-		return clusterDatapoints.remove(instance);
+		return clusterData.remove(instance);
 	}
 
-	public List<DataInstance> getClusterDataInstances() {
-		return clusterDatapoints;
+	public Iterator<DataInstance> getDataInstances() {
+		return clusterData.iterator();
+	}
+
+	public int getClusterSize() {
+		return clusterData.size();
 	}
 
 	public void drainCluster() {
-		clusterDatapoints.clear();
-		recalculateCentroid();
+		clusterData.clear();
+		calculateCentroid();
 	}
 
 	public void combineCluster(Cluster cluster) {
@@ -65,21 +88,24 @@ public class Cluster {
 		id1 = getClusterId();
 		id2 = cluster.getClusterId();
 		clusterId = id1 < id2 ? id1 : id2;
-		for (DataInstance instance : cluster.getClusterDataInstances()) {
+		Iterator<DataInstance> iter = cluster.getDataInstances();
+		while (iter.hasNext()) {
+			DataInstance instance = iter.next();
 			addDataInstance(instance);
+			iter.remove();
 		}
-		cluster.setCentroid(new double[] { 0 });
-		cluster.drainCluster();
-		recalculateCentroid();
+		/* destroy other cluster */
+		cluster = null;
+		calculateCentroid();
 	}
-	
-	public Cluster getSplitCluster() {
+
+	public Cluster splitCluster() {
 		double[] cent1, cent2, curr;
 		curr = getCentroid();
 		cent1 = new double[curr.length];
 		cent2 = new double[curr.length];
 		/* perturb centroid by 5% */
-		for(int i = 0; i < curr.length; i++) {
+		for (int i = 0; i < curr.length; i++) {
 			cent1[i] = curr[i] + (curr[i] * splitDeviation);
 			cent2[i] = curr[i] - (curr[i] * splitDeviation);
 		}
@@ -87,12 +113,24 @@ public class Cluster {
 		return new Cluster(cent2, getDistanceMetric());
 	}
 
-	public void recalculateCentroid() {
+	/* returns the amount the centroid changed */
+	public double calculateCentroid() {
+		update();
 		double[] newCentroid = new double[getCentroid().length];
-		for (DataInstance instance : getClusterDataInstances()) {
-
+		Iterator<DataInstance> iter = getDataInstances();
+		while (iter.hasNext()) {
+			DataInstance instance = iter.next();
+			for (int i = 0; i < instance.getDataDimension(); i++) {
+				newCentroid[i] += instance.getDataVector()[i];
+			}
 		}
+		double divisor = 1 / getClusterSize();
+		for (int i = 0; i < newCentroid.length; i++) {
+			newCentroid[i] *= divisor;
+		}
+		double diff = distanceMetric.getDistance(getCentroid(), newCentroid);
 		setCentroid(newCentroid);
+		return diff;
 	}
 
 	public double getCentroidDistance(DataInstance instance) {

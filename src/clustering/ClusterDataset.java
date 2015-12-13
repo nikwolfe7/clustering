@@ -2,7 +2,7 @@ package clustering;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -12,7 +12,7 @@ public class ClusterDataset {
 	private List<DataInstance> data;
 
 	public ClusterDataset(String fileName) {
-		this.data = new ArrayList<>();
+		this.data = new LinkedList<>();
 		try {
 			System.out.println("Reading data values in " + fileName + "...");
 			Scanner scn = new Scanner(new File(fileName));
