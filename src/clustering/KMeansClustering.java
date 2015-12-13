@@ -9,8 +9,8 @@ public class KMeansClustering {
 
 	private List<Cluster> clusters;
 	private DistanceMetric distMetric;
-	private double targetCentroidDifference = 1.0e-2;
-	private int maxIterations = 1000;
+	private double targetCentroidDifference = 1.0e-10;
+	private int maxIterations = 100000;
 	private int K;
 
 	public KMeansClustering(int K, DistanceMetric metric) {
@@ -31,7 +31,7 @@ public class KMeansClustering {
 		this.maxIterations = maxIterations;
 	}
 
-	public void doKMeansClustering(ClusterDataset dataset) {
+	public void doKMeansClustering(ClusterDataSet dataset) {
 		System.out.println("Randomly initializing K-means with " + K + " clusters... ");
 		List<DataInstance> data = dataset.getClusteringData();
 		/* Initialize clusters */
@@ -40,6 +40,8 @@ public class KMeansClustering {
 		calcCentroids();
 		/* Begin iterating */
 		int iteration = 1;
+		double prevDiff = Double.POSITIVE_INFINITY;
+		/* START */
 		while (true) {
 			/* Reassign Clusters */
 			for (int i = 0; i < getKClusters().size(); i++) {
@@ -75,16 +77,59 @@ public class KMeansClustering {
 			}
 			/* Recalculate Centroids */
 			double centroidChange = calcCentroids();
-			System.out.println("Iteration " + iteration + " | Total Centroid Change: " + centroidChange);
+			/* Fix dead clusters... */
+			for(Cluster cluster : getKClusters()) {
+				if(cluster.getClusterSize() == 0) {
+					/* Find point that is maximally distant from centroid */
+					double maxDist = Double.NEGATIVE_INFINITY;
+					DataInstance farPoint = null;
+					for(DataInstance instance : data) {
+						double dist = cluster.getCentroidDistance(instance);
+						if(dist > maxDist) {
+							maxDist = dist;
+							farPoint = instance;
+						}
+					}
+					cluster.initializeCentroid(farPoint);
+				}
+			}
+			/* Update the world... */
+			double diff = prevDiff - centroidChange;
+			System.out.println("Iteration " + iteration + " | Total Centroid Change: " + centroidChange + " Diff: " + diff);
+			/* Update Diff */
+			prevDiff = centroidChange;
 			/* Check stopping criteria... */
-			if (iteration++ > maxIterations)
+			if (maxIterations > 0 && iteration++ >= maxIterations)
 				break;
-			if (centroidChange < targetCentroidDifference) 
+			if (targetCentroidDifference > 0 && Math.abs(diff) <= targetCentroidDifference) 
 				break;
 		}
 		System.out.println("K-Means Clustering Complete! ");
+		calculateAccuracy();
 	}
 
+	private void calculateAccuracy() {
+		int[][] cMat = new int[K][K];
+		for(Cluster cluster : getKClusters()) {
+			int clusterLabel = cluster.pickClusterLabelFromData();
+			System.out.println("Most common label: " + clusterLabel);
+			Iterator<DataInstance> iter = cluster.getDataInstances();
+			while(iter.hasNext()) {
+				DataInstance inst = iter.next();
+				int instLabel = (int) inst.getLabelValue()[0];
+				cMat[clusterLabel-1][instLabel-1] += 1;
+			}
+		}
+		StringBuilder sb = new StringBuilder("\n");
+		for(int i = 0; i < cMat.length; i++) {
+			for(int j = 0; j < cMat[0].length; j++) {
+				sb.append(cMat[i][j] + "\t");
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb.toString());
+	}
+	
 	private void spreadData(List<DataInstance> data) {
 		Collections.shuffle(data);
 		int i = 0;

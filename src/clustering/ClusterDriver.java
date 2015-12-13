@@ -3,15 +3,29 @@ package clustering;
 public class ClusterDriver {
 
 	public static void main(String[] args) {
-		ClusterDataset aggregation = new ClusterDataset("data/Aggregation.csv");
-		ClusterDataset bridge = new ClusterDataset("data/Bridge.csv");
-		ClusterDataset compound = new ClusterDataset("data/Compound.csv");
-		ClusterDataset flame = new ClusterDataset("data/Flame.csv");
-		ClusterDataset jain = new ClusterDataset("data/Jain.csv");
-		ClusterDataset Spiral = new ClusterDataset("data/Spiral.csv");
-		ClusterDataset twoDiamonds = new ClusterDataset("data/TwoDiamonds.csv");
+		DistanceMetric metric = new EuclideanDistance();
+		ClusterDataSet aggregation = new ClusterDataSet("data/Aggregation.csv");
+		ClusterDataSet bridge = new ClusterDataSet("data/Bridge.csv");
+		ClusterDataSet compound = new ClusterDataSet("data/Compound.csv");
+		ClusterDataSet flame = new ClusterDataSet("data/Flame.csv");
+		ClusterDataSet jain = new ClusterDataSet("data/Jain.csv");
+		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
+		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
 		
-		
+		doClustering(metric, aggregation);
+		doClustering(metric, bridge);
+		doClustering(metric, compound);
+		doClustering(metric, flame);
+		doClustering(metric, jain);
+		doClustering(metric, spiral);
+		doClustering(metric, twoDiamonds);
+	}
+	
+	private static void doClustering(DistanceMetric metric, ClusterDataSet dataSet) {
+		int K = dataSet.getIdealNumClusters();
+		KMeansClustering kMeansClusterer = new KMeansClustering(K*3, metric);
+		kMeansClusterer.setConvergenceCriteria(1.0e-10, 10);
+		kMeansClusterer.doKMeansClustering(dataSet);
 	}
 
 }
