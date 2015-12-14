@@ -54,7 +54,7 @@ public class Cluster {
     clusterId = id;
   }
 
-  public int pickClusterLabelFromData() {
+  public int pickMostCommonClusterLabelFromData() {
     Iterator<DataInstance> iter = getDataInstances();
     Map<Double, Integer> counter = new HashMap<Double, Integer>();
     double maxLabel = 0;
@@ -126,7 +126,7 @@ public class Cluster {
     int id1, id2;
     id1 = getClusterId();
     id2 = cluster.getClusterId();
-    clusterId = id1 < id2 ? id1 : id2;
+    setClusterId(id1 < id2 ? id1 : id2);
     Iterator<DataInstance> iter = cluster.getDataInstances();
     while (iter.hasNext()) {
       DataInstance instance = iter.next();
@@ -159,7 +159,8 @@ public class Cluster {
     Iterator<DataInstance> iter = getDataInstances();
     while (iter.hasNext()) {
       DataInstance instance = iter.next();
-      for (int i = 0; i < instance.getDataDimension(); i++) {
+      /* Shame on implementer if this fails... */
+      for (int i = 0; i < newCentroid.length; i++) {
         newCentroid[i] += instance.getDataVector()[i];
       }
     }

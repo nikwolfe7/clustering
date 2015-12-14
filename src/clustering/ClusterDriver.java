@@ -38,14 +38,16 @@ public class ClusterDriver {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm kMeansClusterer = new KMeansClustering(K, metric);
 		kMeansClusterer.setConvergenceCriteria(1.0e-10, 100);
-		kMeansClusterer.doClustering(dataSet);
+		kMeansClusterer.initialize(dataSet);
+		kMeansClusterer.doClustering();
 	}
 
 	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
 		spectralClusterer.setConvergenceCriteria(1.0e-10, 100);
-		spectralClusterer.doClustering(dataSet);
+		spectralClusterer.initialize(dataSet);
+		spectralClusterer.doClustering();
 	}
 
 }

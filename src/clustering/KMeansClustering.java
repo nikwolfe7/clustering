@@ -1,5 +1,6 @@
 package clustering;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,6 +9,8 @@ import java.util.List;
 public class KMeansClustering implements ClusteringAlgorithm {
 
 	private List<Cluster> clusters;
+	
+	private List<DataInstance> clusterData;
 
 	private DistanceMetric distMetric;
 
@@ -23,6 +26,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		this.K = K;
 		this.distMetric = metric;
 		this.clusters = new LinkedList<>();
+		this.clusterData = new ArrayList<>();
 		for (int i = 0; i < K; i++) {
 			clusters.add(new Cluster(metric));
 		}
@@ -41,15 +45,18 @@ public class KMeansClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void initialize(ClusterDataSet dataset) {
-		// TODO Auto-generated method stub
 		System.out.println("Randomly initializing K-means with " + K + " clusters... ");
 		List<DataInstance> data = dataset.getClusteringData();
+		/* Add data to our set... */
+		for(DataInstance instance : data) {
+		  clusterData.add(instance);
+		}
 		/* Initialize clusters */
-		spreadData(data);
+		spreadData();
 	}
 
 	@Override
-	public void doClustering(ClusterDataSet dataset) {
+	public void doClustering() {
 		/* Calculate initial centroids... */
 		calcCentroids();
 		/* Begin iterating */
@@ -154,7 +161,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	private void calculateAccuracy() {
 		int[][] cMat = new int[K][K];
 		for (Cluster cluster : getKClusters()) {
-			int clusterLabel = cluster.pickClusterLabelFromData();
+			int clusterLabel = cluster.pickMostCommonClusterLabelFromData();
 			if (outputOn)
 				System.out.println("Most common label: " + clusterLabel);
 			Iterator<DataInstance> iter = cluster.getDataInstances();
@@ -183,10 +190,10 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		System.out.println(sb.toString());
 	}
 
-	private void spreadData(List<DataInstance> data) {
-		Collections.shuffle(data);
+	private void spreadData() {
+		Collections.shuffle(clusterData);
 		int i = 0;
-		for (DataInstance instance : data) {
+		for (DataInstance instance : clusterData) {
 			Cluster cluster = getKClusters().get(i);
 			cluster.addDataInstance(instance);
 			if (cluster.getCentroid() == null)
