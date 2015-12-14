@@ -12,20 +12,42 @@ public class ClusterDriver {
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
 		
-		doClustering(metric, aggregation);
-		doClustering(metric, bridge);
-		doClustering(metric, compound);
-		doClustering(metric, flame);
-		doClustering(metric, jain);
-		doClustering(metric, spiral);
-		doClustering(metric, twoDiamonds);
+		doKMeansClustering(metric, aggregation);
+		doSpectralClustering(metric, aggregation);
+		
+//		doKMeansClustering(metric, bridge);
+//		doSpectralClustering(metric, bridge);
+//		
+//		doKMeansClustering(metric, compound);
+//		doSpectralClustering(metric, compound);
+//		
+//		doKMeansClustering(metric, flame);
+//		doSpectralClustering(metric, flame);
+//		
+//		doKMeansClustering(metric, jain);
+//		doSpectralClustering(metric, jain);
+//		
+//		doKMeansClustering(metric, spiral);
+//		doSpectralClustering(metric, spiral);
+//		
+//		doKMeansClustering(metric, twoDiamonds);
+//		doSpectralClustering(metric, twoDiamonds);
 	}
 	
-	private static void doClustering(DistanceMetric metric, ClusterDataSet dataSet) {
+	private static void doKMeansClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
-		KMeansClustering kMeansClusterer = new KMeansClustering(K, metric);
+		ClusteringAlgorithm kMeansClusterer = new KMeansClustering(K, metric);
 		kMeansClusterer.setConvergenceCriteria(1.0e-10, 1000);
-		kMeansClusterer.doKMeansClustering(dataSet);
+		kMeansClusterer.doClustering(dataSet);
 	}
+	
+	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet) {
+    int K = dataSet.getIdealNumClusters();
+    ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
+    spectralClusterer.setConvergenceCriteria(1.0e-10, 1000);
+    spectralClusterer.doClustering(dataSet);
+  }
+	
+	
 
 }

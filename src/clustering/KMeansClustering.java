@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class KMeansClustering {
+public class KMeansClustering implements ClusteringAlgorithm {
 
   private List<Cluster> clusters;
 
@@ -32,12 +32,14 @@ public class KMeansClustering {
     return distMetric;
   }
 
+  @Override
   public void setConvergenceCriteria(double minDiff, int maxIterations) {
     this.targetCentroidDifference = minDiff;
     this.maxIterations = maxIterations;
   }
 
-  public void doKMeansClustering(ClusterDataSet dataset) {
+  @Override
+  public void doClustering(ClusterDataSet dataset) {
     System.out.println("Randomly initializing K-means with " + K + " clusters... ");
     List<DataInstance> data = dataset.getClusteringData();
     /* Initialize clusters */
