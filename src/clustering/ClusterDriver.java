@@ -11,43 +11,41 @@ public class ClusterDriver {
 		ClusterDataSet jain = new ClusterDataSet("data/Jain.csv");
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
-		
+
 		doKMeansClustering(metric, aggregation);
-		doSpectralClustering(metric, aggregation);
-		
-//		doKMeansClustering(metric, bridge);
-//		doSpectralClustering(metric, bridge);
-//		
-//		doKMeansClustering(metric, compound);
-//		doSpectralClustering(metric, compound);
-//		
-//		doKMeansClustering(metric, flame);
-//		doSpectralClustering(metric, flame);
-//		
-//		doKMeansClustering(metric, jain);
-//		doSpectralClustering(metric, jain);
-//		
-//		doKMeansClustering(metric, spiral);
-//		doSpectralClustering(metric, spiral);
-//		
-//		doKMeansClustering(metric, twoDiamonds);
-//		doSpectralClustering(metric, twoDiamonds);
+		doSpectralClustering(new GaussianKernel(0.5), aggregation);
+
+		// doKMeansClustering(metric, bridge);
+		// doSpectralClustering(metric, bridge);
+		//
+		// doKMeansClustering(metric, compound);
+		// doSpectralClustering(metric, compound);
+		//
+		// doKMeansClustering(metric, flame);
+		// doSpectralClustering(metric, flame);
+		//
+		// doKMeansClustering(metric, jain);
+		// doSpectralClustering(metric, jain);
+		//
+		// doKMeansClustering(metric, spiral);
+		// doSpectralClustering(metric, spiral);
+		//
+		// doKMeansClustering(metric, twoDiamonds);
+		// doSpectralClustering(metric, twoDiamonds);
 	}
-	
+
 	private static void doKMeansClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm kMeansClusterer = new KMeansClustering(K, metric);
-		kMeansClusterer.setConvergenceCriteria(1.0e-10, 1000);
+		kMeansClusterer.setConvergenceCriteria(1.0e-10, 100);
 		kMeansClusterer.doClustering(dataSet);
 	}
-	
+
 	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet) {
-    int K = dataSet.getIdealNumClusters();
-    ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
-    spectralClusterer.setConvergenceCriteria(1.0e-10, 1000);
-    spectralClusterer.doClustering(dataSet);
-  }
-	
-	
+		int K = dataSet.getIdealNumClusters();
+		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
+		spectralClusterer.setConvergenceCriteria(1.0e-10, 100);
+		spectralClusterer.doClustering(dataSet);
+	}
 
 }

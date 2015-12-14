@@ -2,8 +2,10 @@ package clustering;
 
 public interface ClusteringAlgorithm {
 
-  void doClustering(ClusterDataSet dataset);
+	void initialize(ClusterDataSet dataset);
 
-  void setConvergenceCriteria(double minDiff, int maxIterations);
+	void doClustering(ClusterDataSet dataset);
+
+	void setConvergenceCriteria(double minDiff, int maxIterations);
 
 }
