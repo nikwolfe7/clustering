@@ -74,13 +74,12 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		EigenDecomposition eig = new EigenDecomposition(laplacianMatrix);
 		/* Now get the K largest column vectors */
 		RealMatrix stackedEigenVectors = eig.getV();
-		List<RealVector> eigenVectors = new ArrayList<>();
+		int rowDim = stackedEigenVectors.getRowDimension();
+		/* eigven vecs matrix */
+    RealMatrix X = new Array2DRowRealMatrix(rowDim, K);
 		for(int i = 0; i < K; i++) {
-			eigenVectors.add(stackedEigenVectors.getColumnVector(i));
+			X.setColumn(i, stackedEigenVectors.getColumn(i));
 		}
-		
-		RealMatrix X = new Array2DRowRealMatrix(eigenVectors.size());
-		
 	}
 
 	/* ================================================================== */
