@@ -80,6 +80,31 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		for(int i = 0; i < K; i++) {
 			X.setColumn(i, stackedEigenVectors.getColumn(i));
 		}
+		/* Normalize the rows of X */
+		RealMatrix Y = new Array2DRowRealMatrix(X.getRowDimension(), X.getColumnDimension());
+		for(int i = 0; i < X.getRowDimension(); i++) {
+		  double xDenom = 0;
+		  for(int j = 0; j < X.getColumnDimension(); j++) {
+		    xDenom += Math.pow(X.getEntry(i, j), 2);
+		  }
+		  xDenom = (xDenom > 0) ? 1.0 / Math.sqrt(xDenom) : 0;
+		  for(int j = 0; j < X.getColumnDimension(); j++) {
+        double val = X.getEntry(i, j) * xDenom;
+		    Y.setEntry(i, j, val);
+      }
+		}
+		/* Re-project the data into a copy using the rows of Y */
+		List<DataInstance> clusterDataCopy = new ArrayList<>();
+		for(int i = 0; i < Y.getRowDimension(); i++) {
+		  DataInstance inst = clusterData.get(i);
+		  DataInstance instCopy = new DataInstance(0, 0, new double[] {0});
+		  instCopy.replaceDataVector(Y.getRow(i));
+		  instCopy.replaceLabelValue(inst.getLabelValue());
+		  clusterDataCopy.add(instCopy);
+		}
+		/* cluster the copied data */
+		algo.initialize(new ClusterDataSet(clusterDataCopy));
+		algo.doClustering();
 	}
 
 	/* ================================================================== */
