@@ -29,7 +29,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	private boolean outputOn;
 
-	private boolean SVD = true;
+	private boolean SVD = false;
 
 	public SpectralClustering(int k, DistanceMetric metric) {
 		this.K = k;
@@ -42,6 +42,11 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		this.algo = new KMeansClustering(k, new EuclideanDistance());
 		algo.setConvergenceCriteria(minDiff, maxIterations);
 		this.outputOn = false;
+	}
+	
+	public SpectralClustering(int k, DistanceMetric metric, boolean SVD) {
+		this(k, metric);
+		this.SVD = SVD;
 	}
 
 	public void setClusteringAlgorithm(ClusteringAlgorithm algo) {
@@ -68,7 +73,6 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void doClustering() {
-		
 		int rowDim = laplacianMatrix.numRows();
 		/* eigven vecs matrix */
 		SimpleMatrix X = new SimpleMatrix(rowDim, K);

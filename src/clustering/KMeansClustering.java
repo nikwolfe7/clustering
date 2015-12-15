@@ -163,14 +163,14 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	private void calculateAccuracy() {
 		int[][] cMat = new int[K][K];
 		for (Cluster cluster : getKClusters()) {
-			int clusterLabel = cluster.getClusterId();
+			int clusterLabel = cluster.pickMostCommonClusterLabelFromData();
 			if (outputOn)
 				System.out.println("Most common label: " + clusterLabel);
 			Iterator<DataInstance> iter = cluster.getDataInstances();
 			while (iter.hasNext()) {
 				DataInstance inst = iter.next();
 				int instLabel = (int) inst.getLabelValue()[0];
-				cMat[clusterLabel][instLabel-1] += 1;
+				cMat[clusterLabel-1][instLabel-1] += 1;
 			}
 		}
 		StringBuilder sb = new StringBuilder("\nlabel\t");

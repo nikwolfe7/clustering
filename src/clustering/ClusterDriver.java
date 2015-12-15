@@ -14,7 +14,7 @@ public class ClusterDriver {
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
 		
-//		runTest(0.45, 0.50, 0.01, metric, aggregation);
+		runTest(0.44, 0.48, 0.01, metric, aggregation, false); /**/
 		
 //		runTest(0.000001, 5, 0.00001, metric, bridge);
 //		
@@ -24,18 +24,18 @@ public class ClusterDriver {
 //		
 //		runTest(0.1, 10, 0.1, metric, jain);
 //		
-		runTest(0.2, 0.4, 0.1, metric, spiral);
+		runTest(0.2, 0.4, 0.1, metric, spiral, true);
 //		
 //		runTest(0.1, 10, 0.1, metric, twoDiamonds);
 		
 	}
 	
-	private static void runTest(double start, double stop, double step, DistanceMetric metric, ClusterDataSet dataSet) {
+	private static void runTest(double start, double stop, double step, DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
 		double val = start;
 		while (val <= stop) {
 //			doKMeansClustering(metric, dataSet);
 			System.out.println("With val = " + val);
-			doSpectralClustering(new GaussianKernel(val), dataSet);
+			doSpectralClustering(new GaussianKernel(val), dataSet, b);
 			val += step;
 		}
 	}
@@ -50,10 +50,10 @@ public class ClusterDriver {
 		System.out.println("\n======================= END K MEANS ===========================\n");
 	}
 
-	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet) {
+	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
 		System.out.println("\n===================== SPECTRAL CLUSTERING ====================\n");
 		int K = dataSet.getIdealNumClusters();
-		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
+		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric, b);
 		spectralClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		spectralClusterer.initialize(dataSet);
 		spectralClusterer.doClustering();
