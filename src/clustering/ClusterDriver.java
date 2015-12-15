@@ -13,7 +13,7 @@ public class ClusterDriver {
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
 
 		doKMeansClustering(metric, aggregation);
-		doSpectralClustering(new GaussianKernel(0.5), aggregation);
+		doSpectralClustering(new GaussianKernel(0.25), aggregation);
 
 		// doKMeansClustering(metric, bridge);
 		// doSpectralClustering(metric, bridge);
