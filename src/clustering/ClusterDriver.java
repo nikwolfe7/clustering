@@ -1,5 +1,8 @@
 package clustering;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ClusterDriver {
 
 	public static void main(String[] args) {
@@ -11,33 +14,43 @@ public class ClusterDriver {
 		ClusterDataSet jain = new ClusterDataSet("data/Jain.csv");
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
+		
+		ExecutorService exec = Executors.newCachedThreadPool();
 
-		doKMeansClustering(metric, aggregation);
-		doSpectralClustering(new GaussianKernel(0.25), aggregation);
-
-		// doKMeansClustering(metric, bridge);
-		// doSpectralClustering(metric, bridge);
-		//
-		// doKMeansClustering(metric, compound);
-		// doSpectralClustering(metric, compound);
-		//
-		// doKMeansClustering(metric, flame);
-		// doSpectralClustering(metric, flame);
-		//
-		// doKMeansClustering(metric, jain);
-		// doSpectralClustering(metric, jain);
-		//
-		// doKMeansClustering(metric, spiral);
-		// doSpectralClustering(metric, spiral);
-		//
-		// doKMeansClustering(metric, twoDiamonds);
-		// doSpectralClustering(metric, twoDiamonds);
+		double val = 0.01;
+		while(val < 10) {
+//			doKMeansClustering(metric, aggregation);
+			System.out.println("With val = " + val);
+			doSpectralClustering(new GaussianKernel(val), aggregation);
+			val += 0.01;
+		}
+	
+//		doKMeansClustering(metric, aggregation);
+////		doSpectralClustering(new GaussianKernel(val), aggregation);
+//		
+//		doKMeansClustering(metric, bridge);
+////		doSpectralClustering(new GaussianKernel(1), bridge);
+//
+//		doKMeansClustering(metric, compound);
+////		doSpectralClustering(new GaussianKernel(5), compound);
+//
+//		doKMeansClustering(metric, flame);
+////		doSpectralClustering(new GaussianKernel(5), flame);
+//
+//		doKMeansClustering(metric, jain);
+////		doSpectralClustering(new GaussianKernel(5), jain);
+//
+//		doKMeansClustering(metric, spiral);
+////		doSpectralClustering(new GaussianKernel(5), spiral);
+//
+//		doKMeansClustering(metric, twoDiamonds);
+////		doSpectralClustering(new GaussianKernel(2), twoDiamonds);
 	}
 
 	private static void doKMeansClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm kMeansClusterer = new KMeansClustering(K, metric);
-		kMeansClusterer.setConvergenceCriteria(1.0e-10, 100);
+		kMeansClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		kMeansClusterer.initialize(dataSet);
 		kMeansClusterer.doClustering();
 	}
@@ -45,7 +58,7 @@ public class ClusterDriver {
 	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric);
-		spectralClusterer.setConvergenceCriteria(1.0e-10, 100);
+		spectralClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		spectralClusterer.initialize(dataSet);
 		spectralClusterer.doClustering();
 	}

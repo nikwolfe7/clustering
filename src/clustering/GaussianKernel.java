@@ -12,8 +12,8 @@ public class GaussianKernel implements DistanceMetric {
 
 	@Override
 	public double getDistance(double[] inst1, double[] inst2) {
-		double dist = euclideanDist.getDistance(inst1, inst2);
-		double denom = 2 * Math.pow(sigma, 2);
+		double dist = -1.0 * euclideanDist.getDistance(inst1, inst2);
+		double denom = 2.0 * Math.pow(sigma, 2);
 		return Math.exp(dist/denom);
 	}
 

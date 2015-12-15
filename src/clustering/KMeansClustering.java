@@ -28,7 +28,9 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		this.clusters = new LinkedList<>();
 		this.clusterData = new ArrayList<>();
 		for (int i = 0; i < K; i++) {
-			clusters.add(new Cluster(metric));
+			Cluster c = new Cluster(metric);
+			c.setClusterId(i);
+			clusters.add(c);
 		}
 		this.outputOn = false;
 	}
@@ -161,14 +163,14 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	private void calculateAccuracy() {
 		int[][] cMat = new int[K][K];
 		for (Cluster cluster : getKClusters()) {
-			int clusterLabel = cluster.pickMostCommonClusterLabelFromData();
+			int clusterLabel = cluster.getClusterId();
 			if (outputOn)
 				System.out.println("Most common label: " + clusterLabel);
 			Iterator<DataInstance> iter = cluster.getDataInstances();
 			while (iter.hasNext()) {
 				DataInstance inst = iter.next();
 				int instLabel = (int) inst.getLabelValue()[0];
-				cMat[clusterLabel - 1][instLabel - 1] += 1;
+				cMat[clusterLabel][instLabel-1] += 1;
 			}
 		}
 		StringBuilder sb = new StringBuilder("\nlabel\t");
@@ -195,9 +197,10 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		int i = 0;
 		for (DataInstance instance : clusterData) {
 			Cluster cluster = getKClusters().get(i);
-			cluster.addDataInstance(instance);
 			if (cluster.getCentroid() == null)
 				cluster.initializeCentroid(instance);
+			else
+				cluster.addDataInstance(instance);
 			i = (i + 1) % K;
 		}
 	}

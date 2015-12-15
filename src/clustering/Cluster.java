@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class Cluster {
 
-  private static int clusterIdGen = 1;
-
   private List<DataInstance> clusterData;
 
   private List<DataInstance> updateList;
@@ -23,7 +21,6 @@ public class Cluster {
   private double splitDeviation = 0.025;
 
   public Cluster(DistanceMetric distanceMetric) {
-    this.clusterId = clusterIdGen++; /* default */
     this.distanceMetric = distanceMetric;
     this.clusterData = new LinkedList<>();
     this.updateList = new LinkedList<>();
@@ -31,7 +28,6 @@ public class Cluster {
   }
 
   public Cluster(double[] centroid, DistanceMetric distanceMetric) {
-    this.clusterId = clusterIdGen++; /* default */
     this.distanceMetric = distanceMetric;
     this.clusterData = new LinkedList<>();
     this.updateList = new LinkedList<>();

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="src/commons-math3-3.5.jar"/>
+	<classpathentry excluding="colt/src/cern/clhep/|ejml-v0/28-libs/|ejml-v0.28-libs/" kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-core-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-core-0.28.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-dense64-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-dense64-0.28.jar" sourcepath="src/ejml-v0.28-libs/EJML-dense64-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-denseC64-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-denseC64-0.28.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-equation-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-equation-0.28.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-simple-0.28-sources.jar"/>
+	<classpathentry kind="lib" path="src/ejml-v0.28-libs/EJML-simple-0.28.jar" sourcepath="src/ejml-v0.28-libs/EJML-simple-0.28-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
