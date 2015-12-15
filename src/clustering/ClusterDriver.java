@@ -17,12 +17,12 @@ public class ClusterDriver {
 		
 		ExecutorService exec = Executors.newCachedThreadPool();
 
-		double val = 0.01;
+		double val = 0.1;
 		while(val < 10) {
 //			doKMeansClustering(metric, aggregation);
 			System.out.println("With val = " + val);
 			doSpectralClustering(new GaussianKernel(val), aggregation);
-			val += 0.01;
+			val += 0.1;
 		}
 	
 //		doKMeansClustering(metric, aggregation);

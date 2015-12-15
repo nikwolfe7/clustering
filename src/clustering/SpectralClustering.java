@@ -4,11 +4,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ejml.data.Matrix;
-import org.ejml.interfaces.decomposition.EigenDecomposition;
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
-import org.ejml.simple.SimpleSVD;
 
 public class SpectralClustering implements ClusteringAlgorithm {
 
@@ -31,6 +28,8 @@ public class SpectralClustering implements ClusteringAlgorithm {
 	private int maxIterations = 10000;
 
 	private boolean outputOn;
+
+	private boolean SVD = true;
 
 	public SpectralClustering(int k, DistanceMetric metric) {
 		this.K = k;
@@ -69,17 +68,29 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void doClustering() {
-		/* Eigen decomposition */
-		System.out.println("Performing Eigen Decomposition on Laplacian matrix...");
-		SimpleEVD<?> eig = laplacianMatrix.eig();
-		/* Now get the K largest column vectors */
 		int rowDim = laplacianMatrix.numRows();
 		/* eigven vecs matrix */
 		SimpleMatrix X = new SimpleMatrix(rowDim, K);
-		for (int i = 0; i < K; i++) {
-			SimpleMatrix vec = eig.getEigenVector(i);
-			for(int j = 0; j < rowDim; j++) {
-				X.set(j, i, vec.get(j));
+		if (!SVD) {
+			/* Eigen decomposition */
+			System.out.println("Performing Eigen Decomposition on Laplacian matrix...");
+			SimpleEVD<?> eig = laplacianMatrix.eig();
+			/* Now get the K largest column vectors */
+			for (int i = 0; i < K; i++) {
+				SimpleMatrix vec = eig.getEigenVector(i);
+				for (int j = 0; j < rowDim; j++) {
+					X.set(j, i, vec.get(j));
+				}
+			}
+		} else {
+			/* SVD decomposition */
+			System.out.println("Performing Singular Value Decomposition on Laplacian matrix...");
+			SimpleMatrix svd = laplacianMatrix.svd().getV();
+			/* Now get the K largest column vectors */
+			for (int i = 0; i < X.numRows(); i++) {
+				for (int j = 0; j < X.numCols(); j++) {
+					X.set(i, j, svd.get(i, j));
+				}
 			}
 		}
 		/* Normalize the rows of X */
@@ -117,7 +128,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	private double[] mat2Dbl(SimpleMatrix extractVector) {
 		double[] d = new double[extractVector.getNumElements()];
-		for(int i = 0; i < d.length; i++) {
+		for (int i = 0; i < d.length; i++) {
 			d[i] = extractVector.get(i);
 		}
 		return d;
@@ -154,7 +165,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		for (int i = 0; i < affinityMatrix.numRows(); i++) {
 			SimpleMatrix row = affinityMatrix.extractVector(true, i);
 			double sum = 0;
-			for(int j = 0; j < row.numCols(); j++)
+			for (int j = 0; j < row.numCols(); j++)
 				sum += row.get(j);
 			diagonalMatrix.set(i, i, sum);
 		}
@@ -193,11 +204,11 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	private double distance(double... v) {
 		double dist = 0;
-		for(double d : v)
+		for (double d : v)
 			dist += d * d;
 		return Math.sqrt(dist);
 	}
-	
+
 	private String printMatrix(SimpleMatrix matrix) {
 		StringBuilder sb = new StringBuilder();
 		DecimalFormat f = new DecimalFormat("###.###");
