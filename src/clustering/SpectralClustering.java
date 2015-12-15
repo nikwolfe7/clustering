@@ -68,6 +68,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void doClustering() {
+		
 		int rowDim = laplacianMatrix.numRows();
 		/* eigven vecs matrix */
 		SimpleMatrix X = new SimpleMatrix(rowDim, K);
