@@ -9,7 +9,7 @@ import java.util.List;
 public class KMeansClustering implements ClusteringAlgorithm {
 
 	private List<Cluster> clusters;
-	
+
 	private List<DataInstance> clusterData;
 
 	private DistanceMetric distMetric;
@@ -21,7 +21,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	private int maxIterations = 100;
 
 	private int K;
-	
+
 	public KMeansClustering(int K, DistanceMetric metric) {
 		this.K = K;
 		this.distMetric = metric;
@@ -47,11 +47,11 @@ public class KMeansClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void initialize(ClusterDataSet dataset) {
-		System.out.println("Randomly initializing K-means with " + K + " clusters... ");
+		print("Randomly initializing K-means with " + K + " clusters... ");
 		List<DataInstance> data = dataset.getClusteringData();
 		/* Add data to our set... */
-		for(DataInstance instance : data) {
-		  clusterData.add(instance);
+		for (DataInstance instance : data) {
+			clusterData.add(instance);
 		}
 		/* Initialize clusters */
 		spreadData();
@@ -113,9 +113,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 			}
 			/* Update the world... */
 			double diff = prevDiff - centroidChange;
-			if (outputOn)
-				System.out.println(
-						"Iteration " + iteration + " | Total Centroid Change: " + centroidChange + " Diff: " + diff);
+			print("Iteration " + iteration + " | Total Centroid Change: " + centroidChange + " Diff: " + diff);
 			/* Update Diff */
 			prevDiff = centroidChange;
 			/* Check stopping criteria... */
@@ -124,7 +122,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 			if (targetCentroidDifference > 0 && Math.abs(diff) <= targetCentroidDifference)
 				break;
 		}
-		System.out.println("K-Means Clustering Complete! ");
+		print("K-Means Clustering Complete! ");
 		calculateAccuracy();
 	}
 
@@ -164,15 +162,18 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		int[][] cMat = new int[K][K];
 		for (Cluster cluster : getKClusters()) {
 			int clusterLabel = cluster.pickMostCommonClusterLabelFromData();
-			if (outputOn)
-				System.out.println("Most common label: " + clusterLabel);
+			print("Most common label: " + clusterLabel);
 			Iterator<DataInstance> iter = cluster.getDataInstances();
 			while (iter.hasNext()) {
 				DataInstance inst = iter.next();
 				int instLabel = (int) inst.getLabelValue()[0];
-				cMat[clusterLabel-1][instLabel-1] += 1;
+				cMat[clusterLabel - 1][instLabel - 1] += 1;
 			}
 		}
+		outputMatrix(cMat);
+	}
+
+	private void outputMatrix(int[][] cMat) {
 		StringBuilder sb = new StringBuilder("\nlabel\t");
 		String s1, s2;
 		s1 = "";
@@ -193,7 +194,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	}
 
 	private void spreadData() {
-		Collections.shuffle(clusterData);
+//		Collections.shuffle(clusterData);
 		int i = 0;
 		for (DataInstance instance : clusterData) {
 			Cluster cluster = getKClusters().get(i);
@@ -211,6 +212,11 @@ public class KMeansClustering implements ClusteringAlgorithm {
 			centroidChange += cluster.calculateCentroid();
 		}
 		return centroidChange;
+	}
+
+	private void print(String s) {
+		if (outputOn)
+			System.out.println(s);
 	}
 
 	public List<Cluster> getKClusters() {

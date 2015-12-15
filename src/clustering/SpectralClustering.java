@@ -62,7 +62,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 
 	@Override
 	public void initialize(ClusterDataSet dataset) {
-		System.out.println("Initializing spectral clustering with " + K + " clusters...");
+		print("Initializing spectral clustering with " + K + " clusters...");
 		for (DataInstance instance : dataset.getClusteringData()) {
 			clusterData.add(instance);
 		}
@@ -78,7 +78,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		SimpleMatrix X = new SimpleMatrix(rowDim, K);
 		if (!SVD) {
 			/* Eigen decomposition */
-			System.out.println("Performing Eigen Decomposition on Laplacian matrix...");
+			print("Performing Eigen Decomposition on Laplacian matrix...");
 			SimpleEVD<?> eig = laplacianMatrix.eig();
 			/* Now get the K largest column vectors */
 			for (int i = 0; i < K; i++) {
@@ -89,7 +89,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 			}
 		} else {
 			/* SVD decomposition */
-			System.out.println("Performing Singular Value Decomposition on Laplacian matrix...");
+			print("Performing Singular Value Decomposition on Laplacian matrix...");
 			SimpleMatrix svd = laplacianMatrix.svd().getV();
 			/* Now get the K largest column vectors */
 			for (int i = 0; i < X.numRows(); i++) {
@@ -143,7 +143,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 	 * Calculates the Affinity matrix
 	 */
 	private void calculateAffinityMatrix() {
-		System.out.println("Computing Affinity matrix...");
+		print("Computing Affinity matrix...");
 		int size = clusterData.size();
 		/* initialize matrix */
 		affinityMatrix = new SimpleMatrix(size, size);
@@ -155,15 +155,14 @@ public class SpectralClustering implements ClusteringAlgorithm {
 				affinityMatrix.set(i, j, distance);
 			}
 		}
-		if (outputOn)
-			System.out.println(printMatrix(affinityMatrix));
+		print(printMatrix(affinityMatrix));
 	}
 
 	/**
 	 * Calculates Diagonal matrix from Affinity matrix
 	 */
 	private void calculateDiagonalMatrix() {
-		System.out.println("Computing Diagonal values from Affinity matrix...");
+		print("Computing Diagonal values from Affinity matrix...");
 		int size = clusterData.size();
 		/* initialize matrix */
 		diagonalMatrix = new SimpleMatrix(size, size);
@@ -174,22 +173,19 @@ public class SpectralClustering implements ClusteringAlgorithm {
 				sum += row.get(j);
 			diagonalMatrix.set(i, i, sum);
 		}
-		if (outputOn)
-			System.out.println(printMatrix(diagonalMatrix));
+		print(printMatrix(diagonalMatrix));
 	}
 
 	/**
 	 * Calculates the Laplacian matrix
 	 */
 	private void calculateLaplacianMatrix() {
-		System.out.println("Computing Laplacian matrix from Diagonal matrix...");
-		int size = clusterData.size();
+		print("Computing Laplacian matrix from Diagonal matrix...");
 		/* initialize matrix */
 		SimpleMatrix A = affinityMatrix;
 		SimpleMatrix D = diagonalInverseSquareRoot(diagonalMatrix);
 		laplacianMatrix = D.mult(A).mult(D);
-		if (outputOn)
-			System.out.println(printMatrix(laplacianMatrix));
+		print(printMatrix(laplacianMatrix));
 	}
 
 	/**
@@ -207,11 +203,9 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		return matrix;
 	}
 
-	private double distance(double... v) {
-		double dist = 0;
-		for (double d : v)
-			dist += d * d;
-		return Math.sqrt(dist);
+	private void print(String s) {
+		if(outputOn)
+			System.out.println(s);
 	}
 
 	private String printMatrix(SimpleMatrix matrix) {
