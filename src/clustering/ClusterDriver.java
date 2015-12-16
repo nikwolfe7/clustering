@@ -35,29 +35,30 @@ public class ClusterDriver {
 		double sigma = start;
 		while (sigma <= stop) {
 			System.out.println("With sigma = " + sigma);
-			doSpectralClustering(new GaussianKernel(sigma), dataSet, b);
+			doSpectralClustering(label, new GaussianKernel(sigma), dataSet, b);
 			sigma += step;
 		}
 		System.out.println("\n===================== " + label.toUpperCase() + ": K MEANS =====================");
-		doKMeansClustering(metric, dataSet);
+		doKMeansClustering(label, metric, dataSet);
 		System.out.println("\n----------------------------------------------------------\n");
 	}
 
-	private static void doKMeansClustering(DistanceMetric metric, ClusterDataSet dataSet) {
+	private static void doKMeansClustering(String label, DistanceMetric metric, ClusterDataSet dataSet) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm kMeansClusterer = new KMeansClustering(K, metric);
 		kMeansClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		kMeansClusterer.initialize(dataSet);
 		kMeansClusterer.doClustering();
-
+		kMeansClusterer.printResultsToFile("results-" + label + ".csv"); 
 	}
 
-	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
+	private static void doSpectralClustering(String label, DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
 		int K = dataSet.getIdealNumClusters();
 		ClusteringAlgorithm spectralClusterer = new SpectralClustering(K, metric, b);
 		spectralClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		spectralClusterer.initialize(dataSet);
 		spectralClusterer.doClustering();
+		spectralClusterer.printResultsToFile("results-" + label + ".csv"); 
 	}
 
 }

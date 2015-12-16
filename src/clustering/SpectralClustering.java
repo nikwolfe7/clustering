@@ -1,5 +1,8 @@
 package clustering;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,11 +118,13 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		List<DataInstance> clusterDataCopy = new ArrayList<>();
 		for (int i = 0; i < Y.numRows(); i++) {
 			DataInstance inst = clusterData.get(i);
-			DataInstance instCopy = new DataInstance(0, 0, new double[] { 0 });
+			AugmentedDataInstance instCopy = new AugmentedDataInstance(0, 0, new double[] { 0 });
 			instCopy.replaceDataVector(mat2Dbl(Y.extractVector(true, i)));
 			instCopy.replaceLabelValue(inst.getLabelValue());
+			instCopy.setOriginalDataVector(inst.getDataVector());
 			clusterDataCopy.add(instCopy);
 		}
+		this.clusterData = clusterDataCopy;
 		/* cluster the copied data */
 		algo.initialize(new ClusterDataSet(clusterDataCopy));
 		algo.doClustering();
@@ -130,6 +135,24 @@ public class SpectralClustering implements ClusteringAlgorithm {
 	/* ==================== HELPER FUNCTIONS ============================ */
 	/* ================================================================== */
 	/* ================================================================== */
+	
+	private class AugmentedDataInstance extends DataInstance {
+
+		private double[] originalVector;
+
+		public AugmentedDataInstance(int dataDimension, int labelDimension, double[] vector) {
+			super(dataDimension, labelDimension, vector);
+			this.originalVector = new double[] { 0 };
+		}
+		
+		public void setOriginalDataVector(double[] vector) {
+			this.originalVector = vector;
+		}
+		
+		public double[] getOriginalDataVector() {
+			return originalVector;
+		}
+	}
 
 	private double[] mat2Dbl(SimpleMatrix extractVector) {
 		double[] d = new double[extractVector.getNumElements()];
@@ -219,6 +242,32 @@ public class SpectralClustering implements ClusteringAlgorithm {
 			sb.append(String.join("\t", arr) + "\n");
 		}
 		return sb.toString();
+	}
+
+	private String getCSVString(double[] arr) {
+		String[] strArr = new String[arr.length];
+		for(int i = 0; i < arr.length; i++) {
+			strArr[i] = "" + arr[i];
+		}
+		return String.join(",", strArr);
+	}
+
+	@Override
+	public void printResultsToFile(String filename) {
+		filename = "spectral-" + filename;
+		try {
+			FileWriter writer = new FileWriter(new File(filename));
+			FileWriter lblWriter = new FileWriter(new File("labels-" + filename));
+			for(DataInstance instance : clusterData) {
+				/* get original data vector with the label... we clustered on the other stuff */
+				writer.write(getCSVString(((AugmentedDataInstance) instance).getOriginalDataVector()) + "\n");
+				lblWriter.write(getCSVString(instance.getLabelValue()) + "\n");
+			}
+			writer.close();
+			lblWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

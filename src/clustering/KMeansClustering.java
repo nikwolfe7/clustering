@@ -1,5 +1,8 @@
 package clustering;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -221,6 +224,31 @@ public class KMeansClustering implements ClusteringAlgorithm {
 
 	public List<Cluster> getKClusters() {
 		return clusters;
+	}
+	
+	private String getCSVString(double[] arr) {
+		String[] strArr = new String[arr.length];
+		for(int i = 0; i < arr.length; i++) {
+			strArr[i] = "" + arr[i];
+		}
+		return String.join(",", strArr);
+	}
+
+	@Override
+	public void printResultsToFile(String filename) {
+		filename = "kmeans-" + filename;
+		try {
+			FileWriter writer = new FileWriter(new File(filename));
+			FileWriter lblWriter = new FileWriter(new File("labels-" + filename));
+			for(DataInstance instance : clusterData) {
+				writer.write(getCSVString(instance.getDataVector()) + "\n");
+				lblWriter.write(getCSVString(instance.getLabelValue()) + "\n");
+			}
+			writer.close();
+			lblWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

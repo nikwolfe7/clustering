@@ -7,5 +7,7 @@ public interface ClusteringAlgorithm {
 	void setConvergenceCriteria(double minDiff, int maxIterations);
 
 	void doClustering();
+	
+	void printResultsToFile(String filename);
 
 }
