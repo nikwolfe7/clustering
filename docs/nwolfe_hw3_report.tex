@@ -51,7 +51,7 @@ In terms of evaluation, I ran the clustering algorithms and generated the confus
   	\hline
 	\end{tabular}
 \end{center}\vspace*{0.5cm}
-With this information, we can directly evaluate the quality of the Spectral and K-means clustering algorithms by simply comparing their diagonal of their confusion matrices (most common group label vs. actual label) to the vectors listed above above.
+With this information, we can directly evaluate the quality of the Spectral and K-means clustering algorithms by simply comparing the diagonal of their confusion matrices (most common group label vs. actual label) to the vectors listed above above.
 To run the java package, simply run the following from the root of this project:
 \begin{verbatim}
 java -jar nwolfe_hw3.jar 
@@ -468,6 +468,8 @@ P(Y=n) &= P2(1-P2)^{n-1}
 \end{align}
 Given samples of $Z$, derive an EM algorithm to estimate $P1$ and $P2$.
 \\[5pt]\textbf{Answer:}
-We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We don't know $P1$ and $P2$ from observing $Z$, so we have to \textit{fractionate} the observations we get for $Z$.
+We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We want to use the EM algorithm to estimate the maximum likelihood values of $P1$ and $P2$ that generated the samples of $Z$. We don't know $P1$ and $P2$ from observing $Z$, so we have to iteratively \textit{fractionate} our observations, and then reestimate our expectation for the values of $P1$ and $P2$.
+
+There will be two steps in defining this EM algorithm: The E-step and the M-step. In the E-step, we estimate our expectation for the data in $Z$ for the current values of $P1$ and $P2$. In the M-step, we use this value to update the maximum likelihood values of $P1$ and $P2$.
 
 \end{document}
