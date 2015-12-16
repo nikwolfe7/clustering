@@ -14,7 +14,7 @@ public class ClusterDriver {
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
 
-		runTest("aggregation", 0.47, 0.50, 0.01, metric, aggregation, false); /* good */
+		runTest("aggregation", 0.47, 0.48, 0.01, metric, aggregation, false); /* good */
 
 		runTest("bridge", 0.42, 0.45, 0.01, metric, bridge, true); /* good */
 
@@ -35,7 +35,7 @@ public class ClusterDriver {
 		double sigma = start;
 		while (sigma <= stop) {
 			System.out.println("With sigma = " + sigma);
-			doSpectralClustering(label, new GaussianKernel(sigma), dataSet, b);
+			doSpectralClustering(label + "-sig" + sigma, new GaussianKernel(sigma), dataSet, b);
 			sigma += step;
 		}
 		System.out.println("\n===================== " + label.toUpperCase() + ": K MEANS =====================");

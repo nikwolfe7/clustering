@@ -1,5 +1,7 @@
 package clustering;
 
+import java.util.List;
+
 public interface ClusteringAlgorithm {
 
 	void initialize(ClusterDataSet dataset);
@@ -9,5 +11,7 @@ public interface ClusteringAlgorithm {
 	void doClustering();
 	
 	void printResultsToFile(String filename);
+
+	List<Cluster> getKClusters();
 
 }

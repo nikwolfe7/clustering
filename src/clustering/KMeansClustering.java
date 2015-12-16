@@ -222,6 +222,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 			System.out.println(s);
 	}
 
+	@Override
 	public List<Cluster> getKClusters() {
 		return clusters;
 	}
@@ -240,9 +241,14 @@ public class KMeansClustering implements ClusteringAlgorithm {
 		try {
 			FileWriter writer = new FileWriter(new File(filename));
 			FileWriter lblWriter = new FileWriter(new File("labels-" + filename));
-			for(DataInstance instance : clusterData) {
-				writer.write(getCSVString(instance.getDataVector()) + "\n");
-				lblWriter.write(getCSVString(instance.getLabelValue()) + "\n");
+			for(Cluster cluster : getKClusters()) {
+				String label = "" + cluster.pickMostCommonClusterLabelFromData();
+				Iterator<DataInstance> iter = cluster.getDataInstances();
+				while(iter.hasNext()) {
+					DataInstance instance = iter.next();
+					writer.write(getCSVString(instance.getDataVector()) + "\n");
+					lblWriter.write(label + "\n");
+				}
 			}
 			writer.close();
 			lblWriter.close();

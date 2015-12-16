@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.ejml.simple.SimpleEVD;
@@ -251,17 +252,22 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		}
 		return String.join(",", strArr);
 	}
-
+	
 	@Override
 	public void printResultsToFile(String filename) {
-		filename = "spectral-" + filename;
+		filename = "kmeans-" + filename;
 		try {
 			FileWriter writer = new FileWriter(new File(filename));
 			FileWriter lblWriter = new FileWriter(new File("labels-" + filename));
-			for(DataInstance instance : clusterData) {
-				/* get original data vector with the label... we clustered on the other stuff */
-				writer.write(getCSVString(((AugmentedDataInstance) instance).getOriginalDataVector()) + "\n");
-				lblWriter.write(getCSVString(instance.getLabelValue()) + "\n");
+			for(Cluster cluster : getKClusters()) {
+				String label = "" + cluster.pickMostCommonClusterLabelFromData();
+				Iterator<DataInstance> iter = cluster.getDataInstances();
+				while(iter.hasNext()) {
+					DataInstance instance = iter.next();
+					/* get original data vector with the label... we clustered on the other stuff */
+					writer.write(getCSVString(((AugmentedDataInstance) instance).getOriginalDataVector()) + "\n");
+					lblWriter.write(label + "\n");
+				}
 			}
 			writer.close();
 			lblWriter.close();
@@ -270,4 +276,8 @@ public class SpectralClustering implements ClusteringAlgorithm {
 		}
 	}
 
+	@Override
+	public List<Cluster> getKClusters() {
+		return algo.getKClusters();
+	}
 }
