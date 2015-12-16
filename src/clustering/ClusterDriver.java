@@ -3,9 +3,9 @@ package clustering;
 public class ClusterDriver {
 
 	public static void main(String[] args) {
-		
+
 		DistanceMetric metric = new EuclideanDistance();
-		
+
 		ClusterDataSet aggregation = new ClusterDataSet("data/Aggregation.csv");
 		ClusterDataSet bridge = new ClusterDataSet("data/Bridge.csv");
 		ClusterDataSet compound = new ClusterDataSet("data/Compound.csv");
@@ -13,33 +13,34 @@ public class ClusterDriver {
 		ClusterDataSet jain = new ClusterDataSet("data/Jain.csv");
 		ClusterDataSet spiral = new ClusterDataSet("data/Spiral.csv");
 		ClusterDataSet twoDiamonds = new ClusterDataSet("data/TwoDiamonds.csv");
-		
-		runTest(0.44, 0.48, 0.01, metric, aggregation, false); /* good */
-		
-		runTest(0.42, 0.45, 0.001, metric, bridge, true); /* good */
-		
-		runTest(0.150, 0.155, 0.001, metric, compound, true); /* good */
-		
-		runTest(0.74, 0.75, 0.005, metric, flame, true); /* good */
-		
-		runTest(0.304, 0.309, 0.001, metric, jain, true); /* good */
-		
-		runTest(0.2, 0.4, 0.1, metric, spiral, true); /* good */
-		
-		runTest(0.08, 0.08, 0.01, metric, twoDiamonds, true); /* good */
-		
+
+		runTest("aggregation", 0.47, 0.50, 0.01, metric, aggregation, false); /* good */
+
+		runTest("bridge", 0.42, 0.45, 0.01, metric, bridge, true); /* good */
+
+		runTest("compound", 0.150, 0.155, 0.001, metric, compound, true); /* good */
+
+		runTest("flame", 0.735, 0.735, 0.001, metric, flame, true); /* good */
+
+		runTest("jain", 0.301, 0.310, 0.001, metric, jain, true); /* good */
+
+		runTest("spiral", 0.2, 0.4, 0.1, metric, spiral, true); /* good */
+
+		runTest("two diamonds", 20, 25, 1.0, metric, twoDiamonds, false); /* good */
+
 	}
-	
-	private static void runTest(double start, double stop, double step, DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
+
+	private static void runTest(String label, double start, double stop, double step, DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
+		System.out.println("\n=============== " + label.toUpperCase() + ": SPECTRAL CLUSTERING ===============");
 		double sigma = start;
 		while (sigma <= stop) {
-			System.out.println("\n========================== K MEANS ===========================");
-			doKMeansClustering(metric, dataSet);
-			System.out.println("\n===================== SPECTRAL CLUSTERING ====================");
 			System.out.println("With sigma = " + sigma);
 			doSpectralClustering(new GaussianKernel(sigma), dataSet, b);
 			sigma += step;
 		}
+		System.out.println("\n===================== " + label.toUpperCase() + ": K MEANS =====================");
+		doKMeansClustering(metric, dataSet);
+		System.out.println("\n----------------------------------------------------------\n");
 	}
 
 	private static void doKMeansClustering(DistanceMetric metric, ClusterDataSet dataSet) {
@@ -48,7 +49,7 @@ public class ClusterDriver {
 		kMeansClusterer.setConvergenceCriteria(1.0e-10, 10000);
 		kMeansClusterer.initialize(dataSet);
 		kMeansClusterer.doClustering();
-		
+
 	}
 
 	private static void doSpectralClustering(DistanceMetric metric, ClusterDataSet dataSet, boolean b) {

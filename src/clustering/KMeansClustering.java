@@ -194,7 +194,7 @@ public class KMeansClustering implements ClusteringAlgorithm {
 	}
 
 	private void spreadData() {
-//		Collections.shuffle(clusterData);
+		Collections.shuffle(clusterData);
 		int i = 0;
 		for (DataInstance instance : clusterData) {
 			Cluster cluster = getKClusters().get(i);
