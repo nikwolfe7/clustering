@@ -58,7 +58,12 @@ java -jar nwolfe_hw3.jar
 \end{verbatim}
 This will run the main method in the class \texttt{ClusterDriver.java}, which will then iterate through a small range of $\sigma$ values which are known to produce generally good spectral clusters, though it is often the case that several random restarts are required in order for the spectral clustering algorithm to settle into the optimal cluster groupings. In this report the best clusters have been chosen, though it is the case that when \textit{you} run it, it might produce an optimal grouping.
 
-This code also produces the results as expected by the provided MATLAB scripts as CSV files in the root directory in which the jar is run. To generate the visualizations of the data, run the following commands 
+This code also produces the results as expected by the provided MATLAB scripts as CSV files in the root directory in which the jar is run. To generate the visualizations of the data, you may select the individual files you want and use the \texttt{visualize.m} script as provided. Alternatively, you may use the results I have included in the report and simply go to the \texttt{external} folder and run the \texttt{gen\_all\_figs.m} script.
+\begin{verbatim}
+cd external/
+matlab gen_all_figs.m
+\end{verbatim}
+Alternatively, you could just look at the pictures in this here report. That's probably easier. 
 
 \subsection*{Questions}
 In your report, answer the following questions: 
