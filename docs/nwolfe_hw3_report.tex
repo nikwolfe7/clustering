@@ -72,9 +72,20 @@ In your report, answer the following questions:
 \\[5pt] {\bf Answer:} One of the ways to fix this is, first off, to attempt to pick the initialization of the cluster centroids according to some logic. In this case we happen to know the optimal value of $K$ from the labeled data. This may result in a better teasing apart of the datapoints and less moving around before the algorithm converges. Another way might be to use bottom up or top down clustering, i.e. to start with a single cluster containing all the data, perturb the centroid and then continually break the clusters apart until an optimal value of $K$ is reached. Or we could start with a large number of clusters and then continually merge them according to some criteria until we reach a desired value of $K$. 
 \end{enumerate}
 \subsection*{Results}
-For each problem I have printed the output of the algorithm after a single run... 
-\\[5pt]
-\textbf{Aggregation: Spectral Clustering} 
+For each problem I have printed the output of the algorithm after a single run. At the beginning of each section is a comparison of 3 pictures. 
+\subsubsection*{Aggregation} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{aggregation} \ 
+\includegraphics[scale=0.25]{results_spectral_aggregation} \ 
+\includegraphics[scale=0.25]{results_kmeans_aggregation}
+\end{center}
+\textbf{Aggregation: Spectral Clustering}
 \begin{verbatim}
 Reading data values in data/Aggregation.csv...
 Reading data values in data/Bridge.csv...
@@ -133,6 +144,18 @@ ___________________________________________________________
 \end{verbatim}
 In the k-means clustering it's clear that several groups did not even emerge from the data (though this does not mean they were empty.)
 \\[5pt]
+\subsubsection*{Bridge} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{bridge} \ 
+\includegraphics[scale=0.25]{results_spectral_bridge} \ 
+\includegraphics[scale=0.25]{results_kmeans_bridge}
+\end{center}
 \textbf{Bridge: Spectral Clustering} 
 \begin{verbatim}
 
@@ -171,6 +194,20 @@ ___________________
 \end{verbatim}
 Again, K-means was not able to find the right clustering... 
 \\[5pt]
+
+\subsubsection*{Compound} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{compound} \ 
+\includegraphics[scale=0.25]{results_spectral_compound} \ 
+\includegraphics[scale=0.25]{results_kmeans_compound}
+\end{center}
+
 \textbf{Compound: Spectral Clustering} 
 \begin{verbatim}
 
@@ -219,6 +256,21 @@ ___________________________________________________
 ----------------------------------------------------------
 
 \end{verbatim}
+
+\subsubsection*{Flame} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{flame} \ 
+\includegraphics[scale=0.25]{results_spectral_flame} \ 
+\includegraphics[scale=0.25]{results_kmeans_flame}
+\end{center}
+
+
 \textbf{Aggregation: Flame Clustering} 
 \begin{verbatim}
 =============== FLAME: SPECTRAL CLUSTERING ===============
@@ -242,6 +294,18 @@ ___________________
 ----------------------------------------------------------
 
 \end{verbatim}
+\subsubsection*{Jain} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{jain} \ 
+\includegraphics[scale=0.25]{results_spectral_jain} \ 
+\includegraphics[scale=0.25]{results_kmeans_jain}
+\end{center}
 \textbf{Jain: Spectral Clustering} 
 \begin{verbatim}
 =============== JAIN: SPECTRAL CLUSTERING ===============
@@ -276,6 +340,20 @@ ___________________
 ----------------------------------------------------------
 
 \end{verbatim}
+
+\subsubsection*{Spiral} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{spiral} \ 
+\includegraphics[scale=0.25]{results_spectral_spiral} \ 
+\includegraphics[scale=0.25]{results_kmeans_spiral}
+\end{center}
+
 \textbf{Spiral: Spectral Clustering} 
 \begin{verbatim}
 
@@ -323,6 +401,20 @@ ___________________________
 ----------------------------------------------------------
 
 \end{verbatim}
+
+\subsubsection*{Two Diamonds} 
+From left to right, the images are:
+\begin{enumerate}
+\item Ground Truth
+\item Spectral Clustering Result
+\item K-Means Clustering Result
+\end{enumerate}
+\begin{center}
+\includegraphics[scale=0.5]{twoDiamonds} \ 
+\includegraphics[scale=0.25]{results_spectral_two_diamonds} \ 
+\includegraphics[scale=0.25]{results_kmeans_two_diamonds}
+\end{center}
+
 \textbf{Two Diamonds: Spectral Clustering} 
 \begin{verbatim}
 =============== TWO DIAMONDS: SPECTRAL CLUSTERING ===============
@@ -363,5 +455,14 @@ It is natural in the sense that the Gaussian kernel function used in spectral cl
 Overall, I found that SVD was better at finding the basis vectors for the projection of the points into $k$ dimensional space. Furthermore in many cases it required a lot of random restarts before the groups coalesced into something reasonable. 
 %\pagebreak
 \section*{Problem 2: Expectation Maximization}
+
+Let $Z$ be the sum of two random variables $X$ and $Y$, $(Z=X+Y)$, where $X$ and $Y$ are drawn independently from below discrete probability distributions with probability mass functions defined as:
+\begin{align}
+P(X=n) &= P1(1-P1)^{n-1}\\
+P(Y=n) &= P2(1-P2)^{n-1}
+\end{align}
+Given samples of $Z$, derive an EM algorithm to estimate $P1$ and $P2$.
+\\[5pt]\textbf{Answer:}
+We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We don't know $P1$ and $P2$ from observing $Z$, so we have to \textit{fractionate} the observations we get for $Z$.
 
 \end{document}
