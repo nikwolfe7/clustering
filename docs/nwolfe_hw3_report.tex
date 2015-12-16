@@ -26,9 +26,10 @@ You are given a number of toy datasets. The visulized groud truth clustering con
 \includegraphics[scale=0.5]{twoDiamonds}
 \end{center}
 {\bf Answer:} 
-I implemented this code in Java, using the Efficient Java Matrix Library (EJML) package to do matrix multiplication and Eigen/Singular Value decomposition. In order to 
+I implemented this code in Java, using the Efficient Java Matrix Library (EJML) package to do matrix multiplication and Eigen/Singular Value decomposition. In general, spectral clustering works a lot better than K-means and is able to determine a lot of structure (such as the spiral pattern) that k-means is unable to find. 
 
-\pagebreak
+In terms of evaluation, I ran the clustering algorithms and generated the confusion matrix between the most common label that emerges in each cluster and their actual labels. A diagonal matrix in this case is of course perfect performance. The accuracy can be determined from looking at the counts of labelled points for each class. 
+%\pagebreak
 \section*{Problem 2: Expectation Maximization}
 
 \end{document}
