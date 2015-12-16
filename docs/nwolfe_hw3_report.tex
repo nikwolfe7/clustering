@@ -37,7 +37,7 @@ In terms of evaluation, I ran the clustering algorithms and generated the confus
 	\hline
   Aggregation & 7 & $[K_1, K_2, K_3, K_4, K_5, K_6, K_7] = [45, 170, 102, 273, 34, 130, 34]$\\
   	\hline
-  	  Compound & 6 & $[K_1, K_2, K_3, K_4, K_5, K_6] = [50, 92, 38, 45, 158, 16]$ \\
+  	  Compound & 6 & $[K_1, K_2, K_3, K_4, K_6] = [50, 92, 38, 45, 158, 16]$ \\
   	  \hline
   	    Spiral & 3 & $[K_1, K_2, K_3] = [101, 105, 106]$ \\
   	    \hline
@@ -57,6 +57,8 @@ To run the java package, simply run the following from the root of this project:
 java -jar nwolfe_hw3.jar 
 \end{verbatim}
 This will run the main method in the class \texttt{ClusterDriver.java}, which will then iterate through a small range of $\sigma$ values which are known to produce generally good spectral clusters, though it is often the case that several random restarts are required in order for the spectral clustering algorithm to settle into the optimal cluster groupings. In this report the best clusters have been chosen, though it is the case that when \textit{you} run it, it might produce an optimal grouping.
+
+This code also produces the results as expected by the provided MATLAB scripts as CSV files in the root directory in which the jar is run. To generate the visualizations of the data, run the following commands 
 
 \subsection*{Questions}
 In your report, answer the following questions: 
@@ -356,23 +358,10 @@ ___________________
 \\[5pt]
 Compare your spectral clustering results with k-means. It is natural that on certain hard toy examples, both method won't generate perfect results? In your report, briefly analyze what is the advantage or disadvantage of spectral clustering over k-means. Why it is the case? 
 \\[5pt]\textbf{Answer:}\\[5pt]
-It is natural in the sense that the Gaussian kernel function used in spectral clustering is good at separating certain kinds of data and not others. Clearly separable or asymmetric groups, even if they have complicated boundaries (such as the spiral) are easy to break apart through projection into a higher dimensional space. In the case of something like the flame or the two diamonds, neither algorithm could solve the problem well, because the spaces are contiguous, and it is not clear (at least from the perspective of the algorithm, which cannot see the coloring or labels) where to draw the boundaries. In these cases, different initializations will result in entirely different groupings. Furthermore in many cases it required a lot of random restarts before the groups coalesced into something reasonable. 
+It is natural in the sense that the Gaussian kernel function used in spectral clustering is good at separating certain kinds of data and not others. Clearly separable groups, even if they have complicated boundaries (such as the spiral) are
 
-The data you're working with is the best way to decide which algorithm to use for clustering. If you're worried about contiguous spaces, rather than absolute distance from a centroid, then spectral clustering is the way to go. On the other hand, it can be computationally expensive to use spectral clustering given the large matrix multiplication involved. K-means is very quick, easy, and fast. Furthermore, it can be difficult to try something like bottom-up or top-down clustering with spectral clustering, which is highly dependent on one's initialization of $k$ and fairly rigid afterwards. K-means is flexible in the sense that it's very easy to change the number of clusters, recompute distances, and use certain ad-hoc mechanisms for getting a better estimate for the right value of $k$ after initialization. 
-
-With spectral clustering I also found that SVD was better than eigen decomposition at finding the basis vectors for the projection of the data points into $k$ dimensional space. 
+Overall, I found that SVD was better at finding the basis vectors for the projection of the points into $k$ dimensional space. Furthermore in many cases it required a lot of random restarts before the groups coalesced into something reasonable. 
 %\pagebreak
 \section*{Problem 2: Expectation Maximization}
-Let $Z$ be the sum of two random variables $X$ and $Y$, $(Z=X+Y)$, where $X$ and $Y$ are drawn independently from below discrete probability distributions with probability mass functions defined as:
-\begin{align}
-P(X=n) &= P1(1-P1)^{n-1}\\
-P(Y=n) &= P2(1-P2)^{n-1}
-\end{align}
-Given samples of $Z$, derive an EM algorithm to estimate $P1$ and $P2$.
-\\[5pt]\textbf{Answer:}
-We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We don't know $P1$ and $P2$ from observing $Z$, so we have to \textit{fractionate} the observations we get for $Z$.
-
-
-
 
 \end{document}
