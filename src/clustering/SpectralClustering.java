@@ -255,7 +255,7 @@ public class SpectralClustering implements ClusteringAlgorithm {
 	
 	@Override
 	public void printResultsToFile(String filename) {
-		filename = "kmeans-" + filename;
+		filename = "spectral-" + filename;
 		try {
 			FileWriter writer = new FileWriter(new File(filename));
 			FileWriter lblWriter = new FileWriter(new File("labels-" + filename));

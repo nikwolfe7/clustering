@@ -1,5 +1,7 @@
 package clustering;
 
+import java.text.DecimalFormat;
+
 public class ClusterDriver {
 
 	public static void main(String[] args) {
@@ -33,9 +35,10 @@ public class ClusterDriver {
 	private static void runTest(String label, double start, double stop, double step, DistanceMetric metric, ClusterDataSet dataSet, boolean b) {
 		System.out.println("\n=============== " + label.toUpperCase() + ": SPECTRAL CLUSTERING ===============");
 		double sigma = start;
+		DecimalFormat f = new DecimalFormat("#.##");
 		while (sigma <= stop) {
 			System.out.println("With sigma = " + sigma);
-			doSpectralClustering(label + "-sig" + sigma, new GaussianKernel(sigma), dataSet, b);
+			doSpectralClustering(label + "-sig" + f.format(sigma), new GaussianKernel(sigma), dataSet, b);
 			sigma += step;
 		}
 		System.out.println("\n===================== " + label.toUpperCase() + ": K MEANS =====================");
