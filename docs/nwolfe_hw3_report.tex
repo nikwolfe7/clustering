@@ -463,25 +463,16 @@ Overall, I found that SVD was better at finding the basis vectors for the projec
 %\pagebreak
 \section*{Problem 2: Expectation Maximization}
 
-Let $Z$ be the sum of two random variables $X$ and $Y$, $(Z=X+Y)$, where $X$ and $Y$ are drawn independently from below discrete probability distributions with probability mass functions defined as:
+Let $Z$ be the sum of two random variables $X$ and $Y$, $(Z=X+Y)$, where $X$ and $Y$ are drawn independently from two discrete probability distributions with probability mass functions defined as:
 \begin{align}
 P(X=n) &= P_1(1-P_1)^{n-1}\\
 P(Y=n) &= P_2(1-P_2)^{n-1}
 \end{align}
 Given samples of $Z$, derive an EM algorithm to estimate $P_1$ and $P_2$.
 \\[5pt]\textbf{Answer:}
-We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We want to use the EM algorithm to estimate the maximum likelihood values of $P_1$ and $P_2$ that generated the samples of $Z$. We don't know $P_1$ and $P_2$ from observing $Z$, so we have to iteratively \textit{fractionate} the observations and reestimate our expectation for the values of $P_1$ and $P_2$.
-
-There will be two steps in defining this EM algorithm: The E-step and the M-step. In the E-step, we compute an expectation for the data in $Z$ for the current (or assumed) values of $P_1$ and $P_2$. In the M-step, we treat this value as the ground truth and update the maximum likelihood values of $P_1$ and $P_2$. Overall, we are attempting to optimize the auxiliary function:
-\begin{align}
-Q(\theta, \theta^{\prime}) = \sum_H  \ P(H|Z,\theta^{\prime}) \ log(P(H,Z | \theta))
-\end{align}
-$H$ is the unseen variable (or variables)... In this case, $H$ represents the two hidden variables $X$ and $Y$, and $Z$ is the observation. $\theta$ represents the current values of the estimates of the model parameters (i.e. $P_1$ and $P_2$), and $\theta^{\prime}$ represents the values in the previous iteration of the algorithm.
-
-This is just like the dice problem we solved in class. Given counts $c_1, c_2, c_3\ldots c_n$ for each discrete value of $n$ that $X$ and $Y$ take on, we can first calculate the total log probability of $P_1$ and $P_2$. (We will use log probability in this case because eventually we'll be taking the derivative to get the maximum likelihood value for $P_1$ and $P_2$ and the log is easily differentiable whereas this function as is totally sucks.)
+We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We want to use the EM algorithm to estimate the maximum likelihood values of $P_1$ and $P_2$ that generated the samples of $Z$. We don't know $P_1$ and $P_2$ from observing $Z$, so we have to iteratively \textit{fractionate} the observations and use them to re-estimate our expectation for the values of $P_1$ and $P_2$.
 
 The total log probabilities of $X$ and $Y$ are the sum of the probabilities of each value of $n$ times the counts $c_n$. This is:
-
 \begin{align}
 log(P(X)) &= \sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1) \\
 log(P(Y)) &= \sum_n c_n \ log(P_2)  + log(1 - P_2)(n - 1)
@@ -490,32 +481,19 @@ log(P(Y)) &= \sum_n c_n \ log(P_2)  + log(1 - P_2)(n - 1)
 To find the maximum likelihood values of $P_1$ and $P_2$ we differentiate this equation and set it to zero:
 
 \begin{align}
-\pdv{}{P_1}log(P(X)) &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right) \\
-0 &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right) \\
-0 &= \frac{c_n}{P_1}  - \frac{n - 1}{(1 - P_1)}\\
-\frac{c_n}{P_1}  &= \frac{n - 1}{(1 - P_1)}\\
+\pdv{}{P_1}log(P(X)) &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right) 
+\\
+0 &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right)
+ \\
+0 &= \frac{c_n}{P_1}  - \frac{n - 1}{(1 - P_1)
+}\\
+\frac{c_n}{P_1}  &= \frac{n - 1}{(1 - P_1)}
+\\
 P_1 &= \frac{c_n}{c_n + n - 1}
 \end{align}
 Likewise for $P_2$:
 \begin{align}
 P_2 &= \frac{c_n}{c_n + n - 1}
 \end{align}
-For the first estimates of $P_1$ and $P_2$, we sum this value over all counts of $n$ in $Z$. Unfortunately, $Z$ represents the sum of two hidden variables $X$ and $Y$, and we do not know what values they actually take. Because we do not know, we fractionate the value of $Z$ into two bins, each of which can take on $n$ values. As we already know:
-\begin{align}
-Z = X + Y 
-\end{align}
-Every $Z$ \textit{must} contain a discrete $X$ and $Y$ value. Thus the values of $X$ and $Y$ represent \textit{fractions} of $Z$ implicitly. By fractionating $Z$, we get possible $X$ and $Y$ values directly. $X$ and $Y$ are the hidden variables, dependent on $P_1$ and $P_2$, and $Z$ is the observation. From the perspective of just $X$, the log likelihood for a given $n$ is:
-\begin{align}
-log(P(X = n | Z))
-\end{align}
-Which can be computed using Bayes' Rule:
-\begin{align}
-log(P(X = n | Z)) &= log(P(Z | X = n)) + log(P(X = n)) - log(P(Z)) \\
-log(P(X = n | Z)) &= log(P(Z | X = n)) + log(P(X = n)) + Const
-\end{align}
-We have $log(P(X = n))$ from above:
-\begin{align}
-log(P(X = n)) &= log(P_1)  + log(1 - P_1)(n - 1)
-\end{align}
-The constant value we can typically ignore, and the value of $P(Z | X = n)$ we will compute by counting the values in 
+
 \end{document}
