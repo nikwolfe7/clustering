@@ -465,35 +465,79 @@ Overall, I found that SVD was better at finding the basis vectors for the projec
 
 Let $Z$ be the sum of two random variables $X$ and $Y$, $(Z=X+Y)$, where $X$ and $Y$ are drawn independently from two discrete probability distributions with probability mass functions defined as:
 \begin{align}
-P(X=n) &= P_1(1-P_1)^{n-1}\\
-P(Y=n) &= P_2(1-P_2)^{n-1}
+P(X=n) &= p_1(1-p_1)^{n-1}\\
+P(Y=n) &= p_2(1-p_2)^{n-1}
 \end{align}
-Given samples of $Z$, derive an EM algorithm to estimate $P_1$ and $P_2$.
+Given samples of $Z$, derive an EM algorithm to estimate $p_1$ and $p_2$.
 \\[5pt]\textbf{Answer:}
-We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We want to use the EM algorithm to estimate the maximum likelihood values of $P_1$ and $P_2$ that generated the samples of $Z$. We don't know $P_1$ and $P_2$ from observing $Z$, so we have to iteratively \textit{fractionate} the observations and use them to re-estimate our expectation for the values of $P_1$ and $P_2$.
-
-The total log probabilities of $X$ and $Y$ are the sum of the probabilities of each value of $n$ times the counts $c_n$. This is:
+We have two discrete probability distributions. Samples of $Z$ are always the sum of $X$ and $Y$, so $Z$ is a multinomial distribution. We want to use the EM algorithm to estimate the maximum likelihood values of $p_1$ and $p_2$ that generated the samples of $Z$. We don't know $p_1$ and $p_2$ from observing $Z$, so we have to iteratively \textit{fractionate} the observations and use them to re-estimate our expectation for the values of $p_1$ and $p_2$. because $p1$ and $p2$ are the only parameters of the above distributions, we can alternatively write them as:
 \begin{align}
-log(P(X)) &= \sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1) \\
-log(P(Y)) &= \sum_n c_n \ log(P_2)  + log(1 - P_2)(n - 1)
+P(X) &= p_1(n)\label{pX}\\
+P(Y) &= p_2(n)\label{pY}
+\end{align}
+We need a way to calculate the parameters $p1$ and $p2$, however. We must estimate this from the data. The total log probabilities of $X$ and $Y$ are the sum of the probabilities of each value of $n$ times their counts $c_n$. This is:
+\begin{align}
+log(P(X)) &= \sum_n c_n \ log(p_1)  + log(1 - p_1)(n - 1) \\
+log(P(Y)) &= \sum_n c_n \ log(p_2)  + log(1 - p_2)(n - 1)
 \end{align}
 
-To find the maximum likelihood values of $P_1$ and $P_2$ we differentiate this equation and set it to zero:
+To find the maximum likelihood values of $p_1$ and $p_2$ we differentiate this equation w.r.t. $P$ and set it to zero:
 
 \begin{align}
-\pdv{}{P_1}log(P(X)) &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right) 
+\pdv{}{p_1}log(P(X)) &= \pdv{}{p_1}\left(\sum_n c_n \ log(p_1)  + log(1 - p_1)(n - 1)\right) 
 \\
-0 &= \pdv{}{P_1}\left(\sum_n c_n \ log(P_1)  + log(1 - P_1)(n - 1)\right)
+0 &= \pdv{}{p_1}\left(\sum_n c_n \ log(p_1)  + log(1 - p_1)(n - 1)\right)
  \\
-0 &= \frac{c_n}{P_1}  - \frac{n - 1}{(1 - P_1)
+0 &= \sum_n \frac{c_n}{p_1}  - \sum_n \frac{n - 1}{(1 - p_1)
 }\\
-\frac{c_n}{P_1}  &= \frac{n - 1}{(1 - P_1)}
+\sum_n \frac{c_n}{p_1}  &= \sum_n \frac{n - 1}{(1 - p_1)}
 \\
-P_1 &= \frac{c_n}{c_n + n - 1}
+p_1 &= \sum_n \frac{c_n}{c_n + n - 1}\label{p1}
 \end{align}
-Likewise for $P_2$:
+Likewise for $p_2 = \sum_n \frac{c_n}{c_n + n - 1}$. This works for the non-log form below because the value that maximizes the logarithmic from will also maximize the original. This of course assumes we know the value of $c_n$ which depends on the value of our hidden variables. So we must estimate it. Over all observations $O$, we'll say the number of observations is given by $size(O)$. Here is the formula for the count of a given value $n$ which forms part of the sum of the observation $o$:
 \begin{align}
-P_2 &= \frac{c_n}{c_n + n - 1}
+c_n &= \sum_{o \in O} \ size(O) \ p_{1,2}(n, o - n | o)\label{cn}
+\end{align} 
+$p$ can be either $p_1$ or $p_2$ based on our current estimates for them. Now that we have this, our algorithm is as follows. $H$ represents our hidden variables, and $O$ is the observation.
+\begin{enumerate}
+\item \textbf{Initialize} $P(H)$, $P(O | H)$ 
+\begin{enumerate}
+\item $P(H)$ in our case is $P(X)$ and $P(Y)$, which we can alternatively write as $P(X, Z - X)$ because $Z = X + Y$. Randomly initialize these values as well. 
+\item $P(O | H)$ is initially a guess for $P(Z | X, Z - X)$. We can randomly initialize these values for all $Z$ in our observation.
+\end{enumerate}
+\item \textbf{Estimate} $P(H | O)$ for each $H$ ($p1$ and $p2$), for each called out number
+\begin{enumerate}
+\item {This is a value we must estimate over all the possible combinations of $X$ and $Y$ which sum to $Z$. If $X = n$ and $Y = Z - n$, in general we can calculate this as follows:
+\begin{align}
+P(n, Z - n | Z) &= \frac{p_1(n) \  p_2(Z - n)}{\sum_{n} \ p_1(n) \ p_2(Z - n)}
+\end{align}}
+\item This summation is over all discrete values of $n$ which can contribute to the value of $Z$, and we know $p1, \  p2$ from (\ref{pX}) and (\ref{pY}) and (\ref{p1}) and (\ref{cn}).
+\end{enumerate}
+\item \textbf{Fractionate} $O$ with each value of $H$, with weight $P(H | O)$ as calculated in the previous step. In this case the value of the combination $Y$ and $X$ will  have the same weight because any value of $X$ determines $Y$. But the fractions of the multiplied values will be different. 
+\item \textbf{Re-estimate} $P(O | H)$ for every value of $O$ and $H$. This is calculated as follows, where $c$ is the count for discrete value of observation $O$:
+\begin{align}
+P(O | H) &= \frac{c \ P(H | O)}{\sum_O c \ P(H | O)}
 \end{align}
+In our case, this becomes: 
+\begin{align}
+P(Z | X=n, Z - n) &= \frac{c_n \ P(n, Z - n | Z)}{\sum_n c_n \ P(n, Z - n | Z)}
+\end{align}
+We of course have $c_n$ from (\ref{cn}).
+\item \textbf{Re-estimate} $P(H)$
+\begin{align}
+P(H) &= \frac{\sum_O c \ P(H | O)}{\sum_{H^{\prime}} \sum_O c \ P(H^{\prime} | O)}
+\end{align}
+In our case, this becomes:
+\begin{align}
+P(p1,p2) &= \frac{\sum_n c_n \ P(n, Z - n | Z)}{\sum_{P^{\prime}} \sum_n c_n \ P^{\prime}(n, Z - n | Z)}
+\end{align}
+Where $P'$ represents our current model parameter estimates for $p_1$ and $p_2$, the Maximum Likelihood values of which are derived above in (\ref{p1}) and (\ref{cn}). 
+\item If not converged, \textbf{return} to 2
+\end{enumerate}
+
+
+Got it? The answer is 42. 
+
+
 
 \end{document}
